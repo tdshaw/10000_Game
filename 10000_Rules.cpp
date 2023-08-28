@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 
 /*
  * 10,000 Dice Game Rules: (2+ players)
@@ -21,7 +22,54 @@
         * Keep a track of what all players score
 */
 
+int determineRoll();
+
+class Player
+{
+    std::string name = "";
+    int turn;
+    int points = 0;
+
+    public:
+    void setName(std::string input) { this->name = input; };
+    std::string getName() { return this->name; };
+    void setTurn() { this->turn = determineRoll(); };
+    int getTurn() { return this->turn; };
+};
+
 int main()
 {
+    srand(time(0));
+
+    int num_players, high_roll = 0, index;
+
+    std::cout << "Welcome to the dice game 10,000! \nHow many players? Enter a number (2-6): ";
+    std::cin >> num_players;
+
+    Player players[num_players];
+
+    std::cout << "\nDetermining who rolls first..." << std::endl;
+    
+    for(int i = 0; i < num_players; i++)
+    {
+        players[i].setName("Player " + std::to_string(i + 1));
+        players[i].setTurn();
+
+        if(players[i].getTurn() > high_roll)
+        {
+            high_roll = players[i].getTurn();
+            index = i;
+        }
+
+        std::cout << players[i].getName() << " rolled a " << players[i].getTurn() << std::endl;
+    }
+
+    std::cout << players[index].getName() << " gets to start." << std::endl;
+
     return 0;
+}
+
+int determineRoll()
+{
+    return rand() % 6 + 1;
 }
