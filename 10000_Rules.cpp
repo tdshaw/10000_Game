@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include "player.h"
 
 /*
  * 10,000 Dice Game Rules: (2+ players)
@@ -23,48 +24,27 @@
 */
 
 int determineRoll();
-
-class Player
-{
-    std::string name = "";
-    int turn;
-    int points = 0;
-
-    public:
-    void setName(std::string input) { this->name = input; };
-    std::string getName() { return this->name; };
-    void setTurn() { this->turn = determineRoll(); };
-    int getTurn() { return this->turn; };
-};
+void getPlayerNames(Player ar[], const int num_players);
+void getPlayerTurns(Player ar[], const int num_players);
 
 int main()
 {
     srand(time(0));
 
-    int num_players, high_roll = 0, index;
+    int num_players, roll, high_roll = 0, index;
 
     std::cout << "Welcome to the dice game 10,000! \nHow many players? Enter a number (2-6): ";
     std::cin >> num_players;
 
     Player players[num_players];
 
+    std::cout << "\nGetting player names..." << std::endl;
+
+    getPlayerNames(players, num_players);
+
     std::cout << "\nDetermining who rolls first..." << std::endl;
-    
-    for(int i = 0; i < num_players; i++)
-    {
-        players[i].setName("Player " + std::to_string(i + 1));
-        players[i].setTurn();
 
-        if(players[i].getTurn() > high_roll)
-        {
-            high_roll = players[i].getTurn();
-            index = i;
-        }
-
-        std::cout << players[i].getName() << " rolled a " << players[i].getTurn() << std::endl;
-    }
-
-    std::cout << players[index].getName() << " gets to start." << std::endl;
+    getPlayerTurns(players, num_players);
 
     return 0;
 }
@@ -72,4 +52,43 @@ int main()
 int determineRoll()
 {
     return rand() % 6 + 1;
+}
+
+void getPlayerNames(Player ar[], const int num_players)
+{
+std::string input;
+
+    for(int i = 0; i < num_players; i++)
+    {
+        std::cout << "Player " << i + 1 << " enter your name: ";
+        std::cin >> input;
+        ar[i].setName(input);
+    }
+}
+
+void getPlayerTurns(Player ar[], const int num_players)
+{
+    int roll, prev_roll, index, high_roll = 0;
+    int incomplete[num_players];
+    bool done = true;
+
+    do {
+        for(int i = 0; i < num_players; i++)
+        {
+            roll = determineRoll();
+
+            ar[i].setTurn(roll);
+
+            if(roll > high_roll)
+            {
+                high_roll = roll;
+                index = i;
+            }
+
+            std::cout << ar[i].getName() << " rolled a " << roll << std::endl;
+        }
+
+    } while(!done);
+
+    std::cout << ar[index].getName() << " gets to start." << std::endl;
 }
