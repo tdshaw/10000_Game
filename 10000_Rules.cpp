@@ -25,22 +25,14 @@
 
 const int CAPACITY = 10;
 
-struct FirstRoll
-{
-    int indices[CAPACITY];
-    int instances = 0;
-};
-
 int determineRoll();
-void rollAll(int ar[], const int size);
-void getPlayerNames(Player ar[], const int num_players);
-void getPlayerTurns(Player ar[], const int num_players);
-void getPlayerTurnsRecursive(Player ar[], int indices[], int num_players, int& turn);
+void rollAll(int rolls[], const int num_players);
+void getPlayerNames(Player players[], const int num_players);
+void getPlayerTurns(Player players[], const int num_players);
+void getPlayerTurnsRecursive(Player players[], int indices[], const int num_players, int& turn);
 void swapPlayers(Player& p1, Player& p2);
-int partition(Player ar[], int start, int end);
-void sortPlayers(Player ar[], int start, int end);
-
-void rollSome(const int ar1[], int ar2[], const int size1, const int size2);
+int partition(Player players[], int start, int end);
+void sortPlayers(Player players[], int start, int end);
 
 int main()
 {
@@ -67,7 +59,15 @@ int main()
 
     getPlayerTurns(players, num_players);
 
+    for(int i =0; i < num_players; i++)
+        std::cout << players[i].getName() << " " << players[i].getTurn() << std::endl;
+    std::cout << std::endl;
+
     sortPlayers(players, 0, num_players - 1);
+
+    for(int i =0; i < num_players; i++)
+        std::cout << players[i].getName() << " " << players[i].getTurn() << std::endl;
+    std::cout << std::endl;
 
     std::cout << players[0].getName() << " will roll first. Turn#" << players[0].getTurn() << std::endl;
 
@@ -79,35 +79,13 @@ int determineRoll()
     return rand() % 6 + 1;
 }
 
-void rollAll(int ar[], const int size)
+void rollAll(int rolls[], const int num_players)
 {
-    int roll;
-
-    for(int i = 0; i < size; i++)
-    {
-        roll = determineRoll();
-        ar[i] = roll;
-        std::cout << i << ": " << roll << std::endl;
-    }
-    std::cout << std::endl;
+    for(int i = 0; i < num_players; i++)
+        rolls[i] = determineRoll();
 }
 
-void rollSome(const int ar1[], int ar2[], const int size1, const int size2)
-{
-    for(int i = 0; i < size1; i++)
-        for(int j = 0; j < size2; j++)
-            ar2[ar1[i]] = determineRoll();
-}
-
-void findAndRemove(int ar1[], const int idx, int& size)
-{
-    for(int i = idx; i < size - 1; i++)
-        ar1[i] = ar1[i + 1];
-
-    size--;
-}
-
-void getPlayerNames(Player ar[], const int num_players)
+void getPlayerNames(Player players[], const int num_players)
 {
 std::string input;
 
@@ -115,7 +93,7 @@ std::string input;
     {
         std::cout << "Player " << i + 1 << " enter your name: ";
         std::cin >> input;
-        ar[i].setName(input);
+        players[i].setName(input);
     }
 }
 
@@ -133,59 +111,39 @@ std::string input;
         * Re-roll duplicates  
 */
 
-void getPlayerTurns(Player ar[], const int num_players)
+void getPlayerTurns(Player players[], const int num_players)
 {
-    int all_rolls[num_players];
-    int dupe_rolls[num_players];
-    int dupe_indices[num_players];
-    int num_instances, highest_roll, highest_idx, turn = 0;
-    int roll;
-    bool done;
+    int rolls[num_players];
+    int indices[num_players];
+    int num_instances, turn = 0;
 
-    std::cout << "Initial roll..." << std::endl;
-
-    for(int i = 0; i < num_players; i++)
-    {
-        roll = determineRoll();
-        all_rolls[i] = roll;
-
-        std::cout << ar[i].getName() << " rolled a " << roll << std::endl; 
-    }
-    std::cout << std::endl;
+    rollAll(rolls, num_players);
 
     for(int i = 6; i > 0; i--)
     {
         num_instances = 0;
 
         for(int j = 0; j < num_players; j++)
-            if(!ar[j].getFlag() && all_rolls[j] == i)
-               dupe_indices[num_instances++] = j;
-    
-        std::cout << "Dupes for " << i << "'s" << std::endl;
-        getPlayerTurnsRecursive(ar, dupe_indices, num_instances, turn);
+            if(!players[j].getFlag() && rolls[j] == i)
+               indices[num_instances++] = j;
+
+        getPlayerTurnsRecursive(players, indices, num_instances, turn);
     }
 }
 
-void getPlayerTurnsRecursive(Player ar[], int indices[], int num_players, int& turn)
+void getPlayerTurnsRecursive(Player players[], int indices[], const int num_players, int& turn)
 {
     if(num_players == 0)
         return;
     else if(num_players == 1)
-        ar[indices[0]].setTurn(turn++);
+        players[indices[0]].setTurn(turn++);
     else
     {
         int rolls[num_players];
         int dupe_indices[num_players];
-        int num_instances, roll;
+        int num_instances;
 
-        std::cout << "Dupes roll..." << std::endl;
-        for(int i = 0; i < num_players; i++)
-        {
-            roll = determineRoll();
-            rolls[i] = roll;
-            std::cout << ar[indices[i]].getName() << " rolled a " << roll << std::endl; 
-        }
-        std::cout << std::endl;
+        rollAll(rolls, num_players);
 
         for(int i = 6; i > 0; i--)
         {
@@ -194,9 +152,8 @@ void getPlayerTurnsRecursive(Player ar[], int indices[], int num_players, int& t
             for(int j = 0; j < num_players; j++)
                 if(rolls[j] == i)
                     dupe_indices[num_instances++] = indices[j];
-
-            std::cout << "Dupes for " << i << "'s" << std::endl;
-            getPlayerTurnsRecursive(ar, dupe_indices, num_instances, turn);
+                    
+            getPlayerTurnsRecursive(players, dupe_indices, num_instances, turn);
         }
     }
 }
@@ -208,38 +165,38 @@ void swapPlayers(Player& p1, Player& p2)
     p2 = temp;
 }
 
-int partition(Player ar[], int start, int end)
+int partition(Player players[], int start, int end)
 {
     int pivot = (start + end) / 2;
     int swap_index = start;
 
-    swapPlayers(ar[pivot], ar[end]);
+    swapPlayers(players[pivot], players[end]);
 
     pivot = end;
 
     for(int i = start; i < end; i++)
     {
-        if(ar[i] <= ar[pivot])
+        if(players[i] <= players[pivot])
         {
-            swapPlayers(ar[i], ar[swap_index]);
+            swapPlayers(players[i], players[swap_index]);
 
             swap_index++;
         }
     }
 
-    swapPlayers(ar[swap_index], ar[pivot]);
+    swapPlayers(players[swap_index], players[pivot]);
 
     return swap_index;
 }
 
-void sortPlayers(Player ar[], int start, int end)
+void sortPlayers(Player players[], int start, int end)
 {
     if(start < end)
     {
-        int pivot = partition(ar, start, end);
+        int pivot = partition(players, start, end);
 
-        sortPlayers(ar, start, pivot - 1);
+        sortPlayers(players, start, pivot - 1);
 
-        sortPlayers(ar, pivot + 1, end);
+        sortPlayers(players, pivot + 1, end);
     }
 }
