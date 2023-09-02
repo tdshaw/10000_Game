@@ -2,8 +2,22 @@
 #define PLAYER_H
 #include <string>
 
+/**
+ * @brief Player class
+ * Private members:
+    * Name of player
+    * Turn order for player
+    * Points player has
+    * Flag for turn order (or anything I need it for) 
+ * Public Members:
+    * setName, getName
+    * setFlag, getFlag
+    * setTurn, getTurn
+    * operator=, operator<, operator<=
+ */
 class Player
 {
+    private:
     std::string name = "";
     int turn = -1;
     int points = 0;
@@ -21,6 +35,10 @@ class Player
     bool operator <=(const Player p) { return (this->turn <= p.turn) ? true:false; };
 };
 
+/**
+ * @brief Definition for operator= -> Copy constructor for players
+ * @param p 
+ */
 void Player::operator =(Player& p) 
 { 
     Player temp; 
