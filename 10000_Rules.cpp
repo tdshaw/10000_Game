@@ -25,6 +25,19 @@
 
 const int CAPACITY = 10;
 
+struct Rolls
+{
+    int roll;
+    bool flag = false;
+};
+
+struct PossibleRolls
+{
+    int dupes = 0;
+    int points = 0;
+    bool flag = false;
+};
+
 int determineRoll();
 void rollAll(int rolls[], const int num_players);
 void swapPlayers(Player& p1, Player& p2);
@@ -33,6 +46,10 @@ void sortPlayers(Player players[], int start, int end);
 void getPlayerNames(Player players[], const int num_players);
 void getPlayerTurns(Player players[], const int num_players);
 void getPlayerTurnsRecursive(Player players[], int indices[], const int num_players, int& turn);
+int getPlayerPoints(Player& p);
+void setRollFlag(Rolls dice_rolls[], const int input);
+void setRollFlags(Rolls dice_rolls[], const int input, const int num);
+int determinePossiblePoints(const int i, const int count);
 
 int main()
 {
@@ -64,7 +81,16 @@ int main()
 
     sortPlayers(players, 0, num_players - 1); // Sort the players array by turn order
 
-    std::cout << players[0].getName() << " will roll first." << std::endl; // Starting player msg
+    std::cout << players[0].getName() << " will roll first." << std::endl << std::endl; // Starting player msg
+
+    // For all players, each rolls 6 dice. Based on the rules above, player can keep rolling until they reach 1000 pts. 
+    // Then they can take as many pts as they want until reaching 10,000 pts.
+    for(int i = 0; i < num_players; i++)
+    {
+        std::cout << "Rolling for " << players[i].getName() << std::endl;
+        players[i].setPoints(getPlayerPoints(players[i]));
+        std::cout << players[i].getName() << " now has " << players[i].getPoints() << " points." << std::endl << std::endl;
+    }
 
     return 0;
 }
@@ -240,4 +266,238 @@ void getPlayerTurnsRecursive(Player players[], int indices[], const int num_play
             getPlayerTurnsRecursive(players, dupe_indices, num_instances, turn); // Run recursive loop again for new dupes
         }
     }
+}
+
+/* 
+* Playing the game:
+    * Player rolls 6 dice
+        * Check for single 1s and 5s, three or more-of-a-kinds, or straights
+            * single 1 = 100pts, single 5 = 50pts
+            * three-of-a-kind = num*100pts (1s are exception = 1000pts) doubling with 4-of-a-kind and so on
+            * straight = 1200pts, three pairs = 600pts
+        * Set aside scoring dice
+        * End turn by adding pts or a roll that scored 0 pts
+            * To earn continuing pts, the player MUST roll 1000pts on one round
+            * If all dice have been rolled on a turn and they score pts for the player, the player MUST roll all 6 at least one more time
+*/
+int getPlayerPoints(Player& p)
+{
+    Rolls dice_rolls[6];
+    PossibleRolls possibilities[6];
+    int input, roll, num, count = 6, straight, pairs, points_psb, points = 0;
+    bool all, not_all;
+    char ans;
+
+    do
+    {
+        points_psb = 0;
+        straight = 0;
+        pairs = 0;
+
+        for(int i = 0; i < 6; i++)
+        {
+            possibilities[i].points = 0;
+            possibilities[i].dupes = 0;
+        }
+
+        if(all)
+        {
+            count = 6;
+            for(int i = 0; i < 6; i++)
+                dice_rolls[i].flag = false;
+        }
+        
+        all = false;
+        not_all = false;
+
+        for(int i = 0; i < 6; i++)
+        {
+            if(!dice_rolls[i].flag) // Die is available
+            {
+                dice_rolls[i].roll = determineRoll();
+            
+                std::cout << "Roll die #" << i + 1 << ": " << dice_rolls[i].roll << std::endl;
+
+                possibilities[dice_rolls[i].roll - 1].dupes++;
+            }
+        }
+
+        for(int i = 0; i < 6; i++)
+        {
+            if(possibilities[i].dupes > 0)
+            {
+                possibilities[i].flag = true;
+                possibilities[i].points = determinePossiblePoints(i, possibilities[i].dupes);
+            }
+
+            std::cout << "For " << i + 1 << "s points are: " << possibilities[i].points << std::endl;
+
+            points_psb += possibilities[i].points;
+            
+            if(possibilities[i].dupes == 1)
+                straight++;
+            
+            if(possibilities[i].dupes == 2)
+                pairs++;
+        }
+
+        if(straight == 6)
+        {
+            std::cout << "You got a straight! Points are 1200, you get to roll again." << std::endl;
+            points += 1200;
+            all = true;
+        }
+        else if(pairs == 3)
+        {
+            std::cout << "You got three pairs! Points are 600, you get to roll again." << std::endl;
+            points += 600;
+            all = true;
+        }
+        else if(points_psb == 0)
+            std::cout << "Sorry you did not roll any points for this round." << std::endl;
+        else
+        {
+            do
+            {
+                std::cout << "Choose which dice you would like to take. Enter a number (1-6) or enter 0 to stop: ";
+                std::cin >> input;
+
+                if((input > 0 && input < 7) && possibilities[input - 1].flag) // Valid
+                {
+                    if(possibilities[input - 1].dupes > 1)
+                    {
+                        std::cout << "How many would you like to take? ";
+                        std::cin >> num;
+
+                        while(num < 1 || num > possibilities[input - 1].dupes)
+                        {
+                            std::cout << "Invalid input. Please enter again: ";
+                            std::cin >> num;
+                        }
+
+                        points += determinePossiblePoints(input - 1, num);
+                        setRollFlags(dice_rolls, input, num);
+
+                        count -= num;
+                    }
+                    else if(possibilities[input - 1].dupes == 1)
+                    {
+                        points += possibilities[input - 1].points;
+                        possibilities[input - 1].flag = false;
+                        count--;
+                        setRollFlag(dice_rolls, input);
+                    }
+                }
+                else if((input > 0 && input < 7) && !possibilities[input - 1].flag)
+                    std::cout << "Sorry the " << input << "'s did not score any points. Please choose another." << std::endl;
+            }while(input != 0 && count > 0);
+
+            if(count == 0)
+            {
+                std::cout << "Wow! You rolled all the dice, you get to roll again." << std::endl;
+                all = true;
+            }
+            else
+            {
+                std::cout << "Would you like to roll again? Enter y/n: ";
+                std::cin >> ans;
+                while(ans != 'y' && ans != 'Y' && ans != 'N' && ans != 'n')
+                {
+                    std::cout << "Invalid input. Please enter y/n: ";
+                    std::cin >> ans;
+                }
+
+                if(ans == 'y' || ans == 'Y')
+                    not_all = true;
+            }
+        }
+
+        std::cout << "You currently have " << points << " points." << std::endl;
+    }while(all || not_all);
+
+    return points;
+}
+
+void setRollFlag(Rolls dice_rolls[], const int input)
+{
+    for(int i = 0; i < 6; i++)
+        if(dice_rolls[i].roll == input)
+            dice_rolls[i].flag = true;
+}
+
+void setRollFlags(Rolls dice_rolls[], const int input, const int num)
+{
+    int count = num;
+    for(int i = 0; count > 0 && i < 6; i++)
+        if(dice_rolls[i].roll == input)
+        {
+            count--;
+            dice_rolls[i].flag = true;
+        }
+}
+
+int determinePossiblePoints(const int i, const int count)
+{
+    int points = 0;
+
+    if(i == 0)
+    {
+        if(count < 3)
+            points = count*100;
+        else if(count == 3)
+            points = 1000;
+        else if(count > 3 && count < 6)
+            points = 2000*(count - 3);
+        else    
+            points = 8000;
+    }
+    if(i == 1)
+    {
+        if(count > 2 && count < 5)
+            points = 200*(count - 2);
+        else if(count == 5)
+            points = 800;
+        else if(count == 6)
+            points = 1600;
+    }
+    if(i == 2)
+    {
+        if(count > 2 && count < 5)
+            points = 300*(count - 2);
+        if(count == 5)
+            points = 1200;
+        else if(count == 6)
+            points = 2400;
+    }
+    if(i == 3)
+    {
+        if(count > 2 && count < 5)
+            points = 400*(count - 2);
+        else if(count == 5)
+            points = 1600;
+        else if(count == 6)
+            points = 3200;
+    }
+    if(i == 4)
+    {
+        if(count < 3)
+            points = 50*count;
+        else if(count == 3)
+            points = 500;
+        else if(count > 3 && count < 6)
+            points = 1000*(count - 3);
+        else
+            points = 4000;
+    }
+    if(i == 5)
+    {
+        if(count > 2 && count < 5)
+            points = 600*(count - 2);
+        else if(count == 5)
+            points = 2400;
+        else if(count == 6)
+            points = 4800;
+    }
+
+    return points;
 }

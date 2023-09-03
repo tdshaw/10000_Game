@@ -13,6 +13,7 @@
     * setName, getName
     * setFlag, getFlag
     * setTurn, getTurn
+    * setPoints, getPoints
     * operator=, operator<, operator<=
  */
 class Player
@@ -30,6 +31,8 @@ class Player
     const bool getFlag() { return this->flag; };
     void setTurn(int input) { this->turn = input; this->setFlag(true); };
     const int getTurn() { return this->turn; };
+    void setPoints(int input) { this->points = input; };
+    const int getPoints() { return this->points; };
     void operator =(Player& p);
     bool operator <(const Player p) { return (this->turn < p.turn) ? true:false;};
     bool operator <=(const Player p) { return (this->turn <= p.turn) ? true:false; };
