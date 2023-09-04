@@ -47,7 +47,6 @@ void getPlayerNames(Player players[], const int num_players);
 void getPlayerTurns(Player players[], const int num_players);
 void getPlayerTurnsRecursive(Player players[], int indices[], const int num_players, int& turn);
 int getPlayerPoints(Player& p);
-void setRollFlag(Rolls dice_rolls[], const int input);
 void setRollFlags(Rolls dice_rolls[], const int input, const int num);
 int determinePossiblePoints(const int i, const int count);
 
@@ -56,7 +55,9 @@ int main()
     srand(time(0)); // Set random seed
 
     // Declare initial variables
-    int num_players; // Stores the number of players for the game  
+    int num_players; // Stores the number of players for the game 
+    int win_idx = -1, highest_pts;
+    bool done = false; 
 
     // Get number of players from user
     std::cout << "Welcome to the dice game 10,000! \nHow many players? Enter a number (2-10): ";
@@ -83,14 +84,56 @@ int main()
 
     std::cout << players[0].getName() << " will roll first." << std::endl << std::endl; // Starting player msg
 
-    // For all players, each rolls 6 dice. Based on the rules above, player can keep rolling until they reach 1000 pts. 
-    // Then they can take as many pts as they want until reaching 10,000 pts.
-    for(int i = 0; i < num_players; i++)
+    do
     {
-        std::cout << "Rolling for " << players[i].getName() << std::endl;
-        players[i].setPoints(getPlayerPoints(players[i]));
-        std::cout << players[i].getName() << " now has " << players[i].getPoints() << " points." << std::endl << std::endl;
-    }
+        for(int i = 0; win_idx == -1 && i < num_players; i++)
+        {
+            std::cout << players[i].getName() << " has " << players[i].getPoints() << " points." << std::endl;
+            std::cout << "Rolling for " << players[i].getName() << std::endl;
+            players[i].addPoints(getPlayerPoints(players[i]));
+
+            if(players[i].getPoints() < 1000)
+            {
+                std::cout << players[i].getName() << " did not score 1000pts or more on this round." << std::endl;
+                players[i].setPoints(0);
+            }
+            
+            std::cout << players[i].getName() << " now has " << players[i].getPoints() << " points." << std::endl << std::endl;
+            
+            if(players[i].getPoints() >= 10000)
+            {
+                win_idx = i;
+                std::cout << players[i].getName() << " scored 10000pts or more! Each other player now gets a chance to beat their score." << std::endl;
+            }
+        }
+
+        if(win_idx != -1)
+        {
+            highest_pts = players[win_idx].getPoints();
+
+            for(int i = 0; i < num_players; i++)
+            {
+                if(i != win_idx)
+                {
+                    std::cout << players[i].getName() << " has " << players[i].getPoints() << " points." << std::endl;
+                    std::cout << "Rolling for " << players[i].getName() << std::endl;
+                    players[i].addPoints(getPlayerPoints(players[i]));
+                }
+            }
+
+            for(int i = 0; i < num_players; i++)
+                if(i != win_idx && players[i].getPoints() > highest_pts)
+                {
+                    win_idx = i;
+                    highest_pts = players[i].getPoints();
+                }
+
+            done = true;
+        }
+
+    }while(!done);
+
+    std::cout << players[win_idx].getName() << " has won the game!" << std::endl;
 
     return 0;
 }
@@ -284,8 +327,9 @@ int getPlayerPoints(Player& p)
 {
     Rolls dice_rolls[6];
     PossibleRolls possibilities[6];
-    int input, roll, num, count = 6, straight, pairs, points_psb, points = 0;
-    bool all, not_all;
+    int choices[6];
+    int input, num, cur_count = 6, straight, pairs, points_psb, points = 0;
+    bool all, not_all, reg;
     char ans;
 
     do
@@ -298,11 +342,12 @@ int getPlayerPoints(Player& p)
         {
             possibilities[i].points = 0;
             possibilities[i].dupes = 0;
+            possibilities[i].flag = false;
         }
 
         if(all)
         {
-            count = 6;
+            cur_count = 6;
             for(int i = 0; i < 6; i++)
                 dice_rolls[i].flag = false;
         }
@@ -324,15 +369,15 @@ int getPlayerPoints(Player& p)
 
         for(int i = 0; i < 6; i++)
         {
-            if(possibilities[i].dupes > 0)
+            if(((i == 0 || i == 4) && possibilities[i].dupes > 0) || possibilities[i].dupes > 2)
             {
                 possibilities[i].flag = true;
-                possibilities[i].points = determinePossiblePoints(i, possibilities[i].dupes);
+                points_psb += determinePossiblePoints(i, possibilities[i].dupes);
             }
 
-            std::cout << "For " << i + 1 << "s points are: " << possibilities[i].points << std::endl;
+            //std::cout << "For " << i + 1 << "s points are: " << possibilities[i].points << std::endl;
 
-            points_psb += possibilities[i].points;
+            choices[i] = possibilities[i].dupes;
             
             if(possibilities[i].dupes == 1)
                 straight++;
@@ -353,83 +398,116 @@ int getPlayerPoints(Player& p)
             points += 600;
             all = true;
         }
+        else if(cur_count == 1 && points_psb > 0)
+        {
+            std::cout << "Wow! Your last roll gave you " << points_psb << " points." << std::endl;
+            points += points_psb;
+            all = true;
+        }
         else if(points_psb == 0)
+        {
+            points = 0;
             std::cout << "Sorry you did not roll any points for this round." << std::endl;
+        }
         else
         {
             do
             {
-                std::cout << "Choose which dice you would like to take. Enter a number (1-6) or enter 0 to stop: ";
+                std::cout << "Choose which dice you would like to take.\nEnter a number (1-6) or enter 0 to stop: ";
                 std::cin >> input;
 
-                if((input > 0 && input < 7) && possibilities[input - 1].flag) // Valid
+                while(input < 0 || input > 6)
                 {
-                    if(possibilities[input - 1].dupes > 1)
+                    std::cout << "Invalid input. Enter a number (1-6) or enter 0 to stop: " << std::endl;
+                    std::cin >> input;
+                }
+
+                if(input == 1 || input == 5)
+                    reg = false;
+                else    
+                    reg = true;
+
+                if(input > 0 && possibilities[input - 1].flag) // Valid
+                {
+                    std::cout << "There are " << possibilities[input - 1].dupes << ' ' << input << "'s.\nHow many would you like to take? ";
+                    std::cin >> num;
+
+                    while(num < 0 || num > possibilities[input - 1].dupes || (reg && num < 3))
                     {
-                        std::cout << "How many would you like to take? ";
+                        std::cout << "Invalid input. Please enter again: ";
                         std::cin >> num;
-
-                        while(num < 1 || num > possibilities[input - 1].dupes)
-                        {
-                            std::cout << "Invalid input. Please enter again: ";
-                            std::cin >> num;
-                        }
-
-                        points += determinePossiblePoints(input - 1, num);
-                        setRollFlags(dice_rolls, input, num);
-
-                        count -= num;
                     }
-                    else if(possibilities[input - 1].dupes == 1)
+                    
+
+                    if(num > 0)
                     {
-                        points += possibilities[input - 1].points;
-                        possibilities[input - 1].flag = false;
-                        count--;
-                        setRollFlag(dice_rolls, input);
+                        possibilities[input - 1].points = determinePossiblePoints(input - 1, num);
+
+                        choices[input - 1] = num;
+                    }
+                    else if(num == 0)
+                    {
+                        possibilities[input - 1].points = 0;
+
+                        choices[input - 1] = 0;
                     }
                 }
-                else if((input > 0 && input < 7) && !possibilities[input - 1].flag)
+                else if(input > 0)
                     std::cout << "Sorry the " << input << "'s did not score any points. Please choose another." << std::endl;
-            }while(input != 0 && count > 0);
+            }while(input != 0 && cur_count > 0);
 
-            if(count == 0)
+            for(int i = 0; i < 6; i++)
+            {
+                if(possibilities[i].points > 0)
+                {
+                    points += possibilities[i].points;
+                    cur_count -= choices[i];
+                    setRollFlags(dice_rolls, i + 1, choices[i]);
+                }
+            }
+
+            if(cur_count == 0)
             {
                 std::cout << "Wow! You rolled all the dice, you get to roll again." << std::endl;
                 all = true;
             }
             else
             {
-                std::cout << "Would you like to roll again? Enter y/n: ";
-                std::cin >> ans;
-                while(ans != 'y' && ans != 'Y' && ans != 'N' && ans != 'n')
-                {
-                    std::cout << "Invalid input. Please enter y/n: ";
-                    std::cin >> ans;
-                }
+                std::cout << "You currently have " << points << " points." << std::endl;
 
-                if(ans == 'y' || ans == 'Y')
+                std::cout << "There are " << cur_count << " dice left." << std::endl;
+
+                if(points >= 1000 || p.getPoints() >= 1000)
+                {
+                    std::cout << "Would you like to roll again? Enter y/n: ";
+                    std::cin >> ans;
+                    while(ans != 'y' && ans != 'Y' && ans != 'N' && ans != 'n')
+                    {
+                        std::cout << "Invalid input. Please enter y/n: ";
+                        std::cin >> ans;
+                    }
+
+                    if(ans == 'y' || ans == 'Y')
+                        not_all = true;
+                }
+                else
                     not_all = true;
             }
         }
 
-        std::cout << "You currently have " << points << " points." << std::endl;
+        if(points > 0)
+            std::cout << "You currently have " << points << " points." << std::endl;
     }while(all || not_all);
 
     return points;
 }
 
-void setRollFlag(Rolls dice_rolls[], const int input)
-{
-    for(int i = 0; i < 6; i++)
-        if(dice_rolls[i].roll == input)
-            dice_rolls[i].flag = true;
-}
-
 void setRollFlags(Rolls dice_rolls[], const int input, const int num)
 {
     int count = num;
+
     for(int i = 0; count > 0 && i < 6; i++)
-        if(dice_rolls[i].roll == input)
+        if(!dice_rolls[i].flag && dice_rolls[i].roll == input)
         {
             count--;
             dice_rolls[i].flag = true;
