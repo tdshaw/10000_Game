@@ -720,7 +720,7 @@ int getPlayerPoints(Player& p)
         rollAllDice(dice_rolls, possibilities);
 
         // Check all rolls for duplicates, possible points, straights, and/or pairs
-        points_psb = checkPointsRules(possibilities, choices, straight, pairs);
+        points_psb += checkPointsRules(possibilities, choices, straight, pairs);
 
         if(straight == 6) // Straight = 1200pts, automatic re-roll
         {
@@ -750,7 +750,7 @@ int getPlayerPoints(Player& p)
             getUserChoices(possibilities, choices, cur_count); // Get choices
 
             // Loop through all possibilities and check for points
-            points = calculatePoints(possibilities, dice_rolls, choices, cur_count);
+            points += calculatePoints(possibilities, dice_rolls, choices, cur_count);
 
             if(cur_count == 0) // All dice rolled, automatic re-roll
             {
