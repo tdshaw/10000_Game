@@ -31,6 +31,42 @@ body {
             font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
         }
 
+.choose_players {
+    padding: 15% 25% 25% 25%; 
+    text-wrap: nowrap;
+}
+    .choose_players h1 {
+        text-align: center;
+        color: #FFFFFF;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+        .choose_players h1 button {
+            color: #FFFFFF;
+            border-radius: 25%;
+            display: inline-block;
+            background-color: #1C352D;
+            font-size: larger;
+            width: 20%;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
+
+    .choose_players h2 {
+        text-align: center;
+        color: #FFFFFF;
+        font-size: large;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+        .choose_players h2 select {
+            color: #FFFFFF;
+            border-radius: 25%;
+            display: inline-block;
+            background-color: #1C352D;
+            font-size: larger;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
+
 .howtoplay {
     padding: 0% 25% 25% 25%; 
     text-wrap: nowrap;
