@@ -106,16 +106,6 @@ body {
         font-family: Arial, Helvetica, sans-serif;
     }
 
-        .howtoplay h1 button {
-            color: #FFFFFF;
-            border-radius: 25%;
-            display: inline-block;
-            background-color: #1C352D;
-            font-size: larger;
-            width: 20%;
-            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-        }
-
     .howtoplay h2 {
         text-align: center;
         color: #FFFFFF;
@@ -135,4 +125,43 @@ body {
             color: #FFFFFF;
             font-size: medium;
             font-family: Arial, Helvetica, sans-serif;
+        }
+
+    .howtoplay div.order {
+        position: fixed;
+        top: inherit;
+        left: 5%;
+    }
+
+    .howtoplay div.game {
+        position: fixed;
+        top: inherit;
+        right: 10%;
+    }
+
+    .howtoplay div.rules {
+        position: fixed;
+        top: 40%;
+        right: 55%
+    }
+
+.button {
+    padding-top: 5%;
+    text-wrap: nowrap;
+}
+
+    .button h1 {
+        text-align: center;
+        color: #FFFFFF;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+        .button h1 button {
+            color: #FFFFFF;
+            border-radius: 25%;
+            display: inline-block;
+            background-color: #1C352D;
+            font-size: larger;
+            width: 10%;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
         }
