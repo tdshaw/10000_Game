@@ -3,7 +3,7 @@ html {
 }
 
 body {
-    background-image: url(../../images/greenBackground.png); 
+    background-image: url(../images/greenBackground.png); 
     background-repeat: repeat-y; 
     background-size: cover;
     background-position: center center fixed; 
