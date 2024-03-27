@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<title>10,000 Game</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <link rel="stylesheet" href="../assets/css/main.css"/>
+	</head>
+    <body>
+        <div class="choose_names">
+            <h1>What Are Your Names?</h1>
+            <h1><div id="names"></div></h1>
+            <h1><button>Continue</button></h1>
+            <h1><button onclick="location.href='choose_players.html'">Return</button></h1>
+        </div>
+        
+        <!-- Scripts -->
+        <script>
+            let num_players = (localStorage.getItem("num_players")) ? localStorage.getItem("num_players") : null; // Get num_players from storage
+
+            // Loop through num_players and add text boxes
+            for(i = 0; i < num_players; i++){
+                document.getElementById("names").innerHTML += "<input type='text'><br>";
+            }
+        </script>
+    </body>
+</html>

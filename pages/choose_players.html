@@ -9,7 +9,7 @@
         <div class="choose_players">
             <h1>How Many Players?</h1>
             <h2>
-                <select id="num_players" name="number_of_players">
+                <select id="num_players" name="num_players">
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
@@ -21,8 +21,27 @@
                     <option value="10">10</option>
                 </select>
             </h2>
-            <h1><button>Continue</button></h1>
+            <h1><button onclick="location.href='choose_player_names.html'">Continue</button></h1>
             <h1><button onclick="location.href='../index.html'">Return</button></h1>
         </div>
+        
+        <!-- Scripts -->
+        <script>
+            let current_value = localStorage.getItem("num_players"); // Get current value
+
+            if(current_value == null) // Check if local storage was cleared
+                localStorage.setItem("num_players", 2);
+
+            const mySel = document.getElementById("num_players"); // Get address of select 
+
+            // Check for changes
+            mySel.addEventListener("change", function(){
+                localStorage.setItem("num_players", this.value);
+            });
+
+            let val = localStorage.getItem("num_players"); // Get current value
+            
+            if (val) mySel.value=val; // Set the dropdown 
+        </script>
     </body>
 </html>
