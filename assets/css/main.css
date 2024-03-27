@@ -1,0 +1,25 @@
+html {
+    box-sizing: border-box;
+}
+
+body {
+    background-image: url(../../images/greenBackground.png); 
+    background-repeat: repeat-y; 
+    background-size: cover;
+}
+
+.menu {
+    padding: 15% 25% 25% 25%; 
+}
+
+    .menu h1 {
+        text-align: center;
+        color: #FFFFFF;
+    }
+
+        .menu h1 button {
+            display: inline-block;
+            font-size: larger;
+            width: 50%;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
