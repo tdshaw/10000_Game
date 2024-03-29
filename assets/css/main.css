@@ -113,33 +113,31 @@ body.howtoplay {
     .instructions h2 {
         text-align: center;
         color: #FFFFFF;
-        font-size: larger;
+        font-size: x-large;
         font-family: Arial, Helvetica, sans-serif;
     }
 
     .instructions ul {
-        list-style-position: inside; 
         color: #FFFFFF;
-        font-size: larger;
+        font-size: x-large;
         font-family: Arial, Helvetica, sans-serif;
     }
 
         .instructions ul li ul li {
             color: #FFFFFF;
-            font-size: large;
+            font-size: x-large;
             font-family: Arial, Helvetica, sans-serif;
         }
 
     .instructions .section_parent {
-        border: 1px solid black;
         display: flexbox;
+        text-wrap: wrap;
         text-align: left;
     }
 
     .instructions .section_parent .section_child {
         flex: 1;
-        border: 1px solid red;
-        margin-bottom: 2%;
+        margin-bottom: 5%;
         vertical-align: top;
     }
 
