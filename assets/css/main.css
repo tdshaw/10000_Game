@@ -13,6 +13,10 @@ body {
     overflow: hidden;
 }
 
+body.howtoplay {
+    overflow-y: scroll;
+}
+
 .menu {
     padding: 15% 25% 25% 25%; 
 }
@@ -95,58 +99,51 @@ body {
         font-size: large;
     }
 
-.howtoplay {
+.instructions {
     padding: 0% 25% 25% 25%; 
     text-wrap: nowrap;
 }
 
-    .howtoplay h1 {
+    .instructions h1 {
         text-align: center;
         color: #FFFFFF;
         font-family: Arial, Helvetica, sans-serif;
     }
 
-    .howtoplay h2 {
+    .instructions h2 {
         text-align: center;
         color: #FFFFFF;
-        font-size: large;
+        font-size: larger;
         font-family: Arial, Helvetica, sans-serif;
     }
 
-    .howtoplay ul {
-        text-indent: 10%;
+    .instructions ul {
         list-style-position: inside; 
         color: #FFFFFF;
-        font-size: large;
+        font-size: larger;
         font-family: Arial, Helvetica, sans-serif;
     }
 
-        .howtoplay ul li ul li {
+        .instructions ul li ul li {
             color: #FFFFFF;
-            font-size: medium;
+            font-size: large;
             font-family: Arial, Helvetica, sans-serif;
         }
 
-    .howtoplay div.order {
-        position: fixed;
-        top: inherit;
-        left: 5%;
+    .instructions .section_parent {
+        border: 1px solid black;
+        display: flexbox;
+        text-align: left;
     }
 
-    .howtoplay div.game {
-        position: fixed;
-        top: inherit;
-        right: 10%;
-    }
-
-    .howtoplay div.rules {
-        position: fixed;
-        top: 40%;
-        right: 55%
+    .instructions .section_parent .section_child {
+        flex: 1;
+        border: 1px solid red;
+        margin-bottom: 2%;
+        vertical-align: top;
     }
 
 .button {
-    padding-top: 5%;
     text-wrap: nowrap;
 }
 
@@ -162,6 +159,6 @@ body {
             display: inline-block;
             background-color: #1C352D;
             font-size: larger;
-            width: 10%;
+            width: 20%;
             font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
         }
