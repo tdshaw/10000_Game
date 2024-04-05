@@ -5,8 +5,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <link rel="stylesheet" href="assets/css/main.css"/>
         <link rel="icon" type="image/png" href="assets/images/dice.png">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	</head>
     <body>
+        <audio id="music" autoplay>
+            <source src="https://Github-Portfolio.s3.us-west-000.backblazeb2.com/audio/allthat.mp3" type="audio/mp3">
+        </audio>
         <div class="menu">
             <div class="title">
                 <h1>10,000 Game</h1>
@@ -20,6 +24,16 @@
         <!-- Scripts -->
         <script>
             localStorage.clear();
+            var x = 0;
+            var songs = ["allthat", "funkysuspense", "badass", "thejazzpiano", "thelounge", "straight"]
+            var music = document.getElementById("music");
+            $("#music").bind("ended", function(){
+                x=x+1;
+                console.log(x);
+                music.src = "https://Github-Portfolio.s3.us-west-000.backblazeb2.com/audio/" + songs[x%6] + ".mp3";
+                music.load();
+                music.play();       
+            });
         </script>
     </body>
 </html>
