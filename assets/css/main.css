@@ -17,7 +17,10 @@ body.howtoplay {
 }
 
 .menu {
-    padding: 10% 25% 25% 25%; 
+    width: 40%;
+    margin-top: 10%;
+    margin-left: 30%;
+    border: thick solid #000000;
 }
 
     .menu .title h1{
@@ -43,8 +46,10 @@ body.howtoplay {
         }
 
 .choose_players {
-    padding: 15% 25% 25% 25%; 
-    text-wrap: nowrap;
+    width: 40%;
+    margin-top: 10%;
+    margin-left: 30%;
+    border: thick solid #000000; 
 }
     .choose_players h1 {
         text-align: center;
@@ -59,7 +64,7 @@ body.howtoplay {
             display: inline-block;
             background-color: #1C352D;
             font-size: larger;
-            width: 40%;
+            width: 50%;
             font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
         }
 
@@ -80,8 +85,10 @@ body.howtoplay {
         }
 
 .options {
-    padding: 10% 25% 25% 25%; 
-    text-wrap: nowrap;
+    width: 40%;
+    margin-top: 10%;
+    margin-left: 30%;
+    border: thick solid #000000;
 }
     .options h1 {
         text-align: center;
@@ -96,7 +103,7 @@ body.howtoplay {
             display: inline-block;
             background-color: #1C352D;
             font-size: larger;
-            width: 40%;
+            width: 50%;
             font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
         }
 
@@ -117,8 +124,10 @@ body.howtoplay {
         }
 
 .choose_names {
-    padding: 1% 25% 25% 25%; 
-    text-wrap: nowrap;
+    width: 40%;
+    margin-top: 0;
+    margin-left: 30%;
+    border: thick solid #000000;
 }
     .choose_names h1 {
         text-align: center;
@@ -133,7 +142,7 @@ body.howtoplay {
             display: inline-block;
             background-color: #1C352D;
             font-size: larger;
-            width: 40%;
+            width: 50%;
             font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
         }
 
@@ -146,8 +155,10 @@ body.howtoplay {
     }
 
 .instructions {
-    padding: 0% 25% 25% 25%; 
-    text-wrap: nowrap;
+    width: 40%;
+    margin-top: 0;
+    margin-left: 30%;
+    border: thick solid #000000;
 }
 
     .instructions h1 {
@@ -203,6 +214,6 @@ body.howtoplay {
             display: inline-block;
             background-color: #1C352D;
             font-size: larger;
-            width: 20%;
+            width: 30%;
             font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
         }
