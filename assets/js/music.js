@@ -49,7 +49,7 @@ function updateTrackTime(track){
 
 // Plays next song on end
 $("#current_audio").bind("ended", function(){
-    current_song = (current_song + 1) % num_songs;
+    current_song = (Number(current_song) + 1) % num_songs;
     current_audio.src = src + songs_src[current_song] + ".mp3";     
     localStorage.setItem("current_song", current_song); 
 });
