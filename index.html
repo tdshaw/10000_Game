@@ -8,9 +8,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	</head>
     <body>
-        <audio id="music" autoplay>
-            <source src="https://Github-Portfolio.s3.us-west-000.backblazeb2.com/audio/allthat.mp3" type="audio/mp3">
-        </audio>
+        <div id="music"></div>
         <div class="menu">
             <div class="title">
                 <h1>10,000 Game</h1>
@@ -18,22 +16,9 @@
             <h1><button onclick="location.href='pages/choose_players.html'">Start Game</button></h1>
             <h1><button onclick="location.href='pages/how_to_play.html'">How To Play</button></h1>
             <h1><button>Leaderboard</button></h1>
-            <h1><button>Options</button></h1>
+            <h1><button onclick="location.href='pages/options.html'">Options</button></h1>
         </div>
-
-        <!-- Scripts -->
-        <script>
-            localStorage.clear();
-            var x = 0;
-            var songs = ["allthat", "funkysuspense", "badass", "thejazzpiano", "thelounge", "straight"]
-            var music = document.getElementById("music");
-            $("#music").bind("ended", function(){
-                x=x+1;
-                console.log(x);
-                music.src = "https://Github-Portfolio.s3.us-west-000.backblazeb2.com/audio/" + songs[x%6] + ".mp3";
-                music.load();
-                music.play();       
-            });
-        </script>
+        <script src="assets/js/music.js"></script>
+        <script src="assets/js/main.js"></script>
     </body>
 </html>

@@ -79,6 +79,43 @@ body.howtoplay {
             font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
         }
 
+.options {
+    padding: 10% 25% 25% 25%; 
+    text-wrap: nowrap;
+}
+    .options h1 {
+        text-align: center;
+        font-size: 300%;
+        color: #FFFFFF;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+        .options h1 button {
+            color: #FFFFFF;
+            border-radius: 25%;
+            display: inline-block;
+            background-color: #1C352D;
+            font-size: larger;
+            width: 40%;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
+
+    .options h2 {
+        text-align: center;
+        color: #FFFFFF;
+        font-size: xx-large;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+        .options h2 select {
+            color: #FFFFFF;
+            border-radius: 25%;
+            display: inline-block;
+            background-color: #1C352D;
+            font-size: larger;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
+
 .choose_names {
     padding: 1% 25% 25% 25%; 
     text-wrap: nowrap;
