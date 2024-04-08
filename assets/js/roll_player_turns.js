@@ -14,6 +14,10 @@ for(i = 0; i < num_players; i++)
 
 getPlayerTurns(players, num_players); // Get turn order for each player
 
+sortPlayers(players, 0, num_players - 1);
+
+localStorage.setItem("players", JSON.stringify(players));
+
 /**************************************************************
  * @brief Generates a random number between 1-6 for dice rolls
 **************************************************************/
@@ -103,5 +107,69 @@ function getPlayerTurnsRecursive(players, indices, num_players, turn)
 
             getPlayerTurnsRecursive(players, dupe_indices, num_instances, turn); // Run recursive loop again for new dupes
         }
+    }
+}
+
+/**********************************************
+ * @brief Swaps two players
+ * @param players -> See class def for Player
+ * @param p1 -> Index for first player
+ * @param p2 -> Index for second player
+**********************************************/
+function swapPlayers(players, p1, p2)
+{
+    let temp = players[p1];
+    players[p1] = players[p2];
+    players[p2] = temp;
+}
+
+/********************************************************************************
+ * @brief Partition function for quicksorting the array of players by turn order
+ * @param players -> See class def for Player
+ * @param start -> The start index
+ * @param end -> The end index
+ * @return int 
+********************************************************************************/
+function partition(players, start, end)
+{
+    // Declare initial variables
+    let pivot = Math.floor((start + end) / 2);  // Calculate pivot point
+    let swap_index = start;         // Get the initial swap index
+
+    swapPlayers(players, pivot, end); // Swap pivot and end
+
+    pivot = end; // Set pivot to the end of the array
+
+    // Starting from the beginning, find smaller values and swap
+    for(let i = start; i < end; i++)
+    {
+        if(players[i].checkLessThanEqual(players[pivot])) // If smaller -> swap
+        {
+            swapPlayers(players, i, swap_index);
+
+            swap_index++;
+        }
+    }
+
+    swapPlayers(players, swap_index, pivot); // Swap pivot with new swap index
+
+    return swap_index; // Return new swap index
+}
+
+/*********************************************************
+ * @brief Quicksort by turn order for array of players
+ * @param players -> See class def for Player
+ * @param start -> Start index
+ * @param end -> End index
+*********************************************************/
+function sortPlayers(players, start, end)
+{
+    if(start < end) // Recursive loop until start >= end
+    {
+        let pivot = partition(players, start, end); // Get the pivot
+
+        sortPlayers(players, start, pivot - 1); // Run quicksort for left partition
+
+        sortPlayers(players, pivot + 1, end); // Run quicksort for right partition
     }
 }

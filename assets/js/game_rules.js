@@ -340,68 +340,6 @@ void getUserChoices(possibilities, choices, cur_count)
     } while(input != 0 && cur_count > 0); // Loop until user inputs 0 or there are no more dice left to choose
 }
 
-/***************************
- * @brief Swaps two players
- * @param p1 -> Player 1
- * @param p2 -> Player 2
-***************************/
-function swapPlayers(p1, p2)
-{
-    temp = new Player(); // Create a temporary player
-    p1.copyPlayerValues(temp, p2); // Copy constructor
-}
-
-/********************************************************************************
- * @brief Partition function for quicksorting the array of players by turn order
- * @param players -> See class def for Player
- * @param start -> The start index
- * @param end -> The end index
- * @return int 
-********************************************************************************/
-function partition(players, start, end)
-{
-    // Declare initial variables
-    var pivot = (start + end) / 2;  // Calculate pivot point
-    var swap_index = start;         // Get the initial swap index
-
-    swapPlayers(players[pivot], players[end]); // Swap pivot and end
-
-    pivot = end; // Set pivot to the end of the array
-
-    // Starting from the beginning, find smaller values and swap
-    for(var i = start; i < end; i++)
-    {
-        if(players[i] <= players[pivot]) // If smaller -> swap
-        {
-            swapPlayers(players[i], players[swap_index]);
-
-            swap_index++;
-        }
-    }
-
-    swapPlayers(players[swap_index], players[pivot]); // Swap pivot with new swap index
-
-    return swap_index; // Return new swap index
-}
-
-/*********************************************************
- * @brief Quicksort by turn order for array of players
- * @param players -> See class def for Player
- * @param start -> Start index
- * @param end -> End index
-*********************************************************/
-void sortPlayers(players, start, end)
-{
-    if(start < end) // Recursive loop until start >= end
-    {
-        var pivot = partition(players, start, end); // Get the pivot
-
-        sortPlayers(players, start, pivot - 1); // Run quicksort for left partition
-
-        sortPlayers(players, pivot + 1, end); // Run quicksort for right partition
-    }
-}
-
 /*******************************************************************************
  * @brief Determine how many points the current player will get from this round
  * @param p -> The player being processed

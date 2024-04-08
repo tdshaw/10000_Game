@@ -32,24 +32,4 @@ class Player
     getPoints() { return this.points; };
     checkLessThan(p) { return (this.turn < p.turn) ? true:false;};
     checkLessThanEqual(p) { return (this.turn <= p.turn) ? true:false; };
-
-    /*******************************************************
-     * @brief Copy constructor for players
-     * @param temp -> Copies values for p temporarily
-     * @param p -> Copies values from player
-    *******************************************************/
-    copyPlayerValues(temp, p)
-    { 
-        temp.name = p.name; 
-        temp.turn = p.turn; 
-        temp.points = p.points;
-
-        p.name = this.name;
-        p.turn = this.turn;
-        p.points = this.points;
-
-        this.name = temp.name;
-        this.turn = temp.turn;
-        this.points = temp.points; 
-    }
 }
