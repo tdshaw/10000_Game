@@ -502,24 +502,6 @@ void sortPlayers(players, start, end)
     }
 }
 
-/******************************************************
- * @brief Get the Player Names object for each player
- * @param players -> See class def for Player
- * @param num_players -> # of players in the game
-******************************************************/
-function getPlayerNames(players, num_players)
-{
-    var input;
-
-    for(var i = 0; i < num_players; i++)
-    {
-        // std::cout << "Player " << i + 1 << " enter your name: ";
-        // std::cin >> input;
-
-        players[i].setName(input);
-    }
-}
-
 /*****************************************************
  * @brief Get the Player Turns object for each player
  * @param players -> See class def for Player
