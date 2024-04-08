@@ -19,102 +19,13 @@
         * Keep a track of what all players score
 ******************************************************************************************************************************************/
 
-// Declare global variables
-const CAPACITY = 10;
-
-/********************* CLASS DEFINITIONS *********************/
-
-/*******************************************************
- * @brief Player class
-    * Name of player
-    * Turn order for player
-    * Points player has
-    * Flag for turn order (or anything I need it for) 
-    * setName, getName
-    * setFlag, getFlag
-    * setTurn, getTurn
-    * setPoints, addPoints, getPoints
-    * operator=, operator<, operator<=
-*******************************************************/
-class Player
-{
-    constructor() {
-        this.name = "";
-        this.turn = -1;
-        this.points = 0;
-        this.flag = false;
-    }
-
-    setName(input) { this.name = input; };
-    getName() { return this.name; };
-    setFlag(input) { this.flag = input; };
-    getFlag() { return this.flag; };
-    setTurn(input) { this.turn = input; this.setFlag(true); };
-    getTurn() { return this.turn; };
-    setPoints(input) { this.points = input; };
-    addPoints(input) { this.points += input; };
-    getPoints() { return this.points; };
-    checkLessThan(p) { return (this.turn < p.turn) ? true:false;};
-    checkLessThanEqual(p) { return (this.turn <= p.turn) ? true:false; };
-
-    /*******************************************************
-     * @brief Copy constructor for players
-     * @param temp -> Copies values for p temporarily
-     * @param p -> Copies values from player
-    *******************************************************/
-    copyPlayerValues(temp, p)
-    { 
-        temp.name = p.name; 
-        temp.turn = p.turn; 
-        temp.points = p.points;
-
-        p.name = this.name;
-        p.turn = this.turn;
-        p.points = this.points;
-
-        this.name = temp.name;
-        this.turn = temp.turn;
-        this.points = temp.points; 
-    }
-}
-
-/*******************************************************
- * @brief Class for the dice being rolled
-    * roll -> # determined by roll
-    * flag -> indicates die has been taken out of play
-*******************************************************/
-class Dice
-{
-    constructor() 
-    {
-        this.roll;
-        this.flag = false;
-    }
-}
-
-/*******************************************************
- * @brief Class for all possibilities for each dice
-    * dupes -> # of duplicate rolls
-    * points -> # of possible points for roll
-    * flag -> indicates points are possible for roll  
-*******************************************************/
-class PossibleRolls
-{
-    constructor() 
-    {
-        this.dupes = 0;
-        this.points = 0;
-        this.flag = false;
-    }
-}
-
 /********************* GLOBAL FUNCTIONS *********************/
 
 /**************************************************************
  * @brief Generates a random number between 1-6 for dice rolls
 **************************************************************/
 function determineRoll() {
-    return Math.random() * (6 - 1) + 1; // Return a random number between 1-6
+    return Math.floor(Math.random() * (6) + 1); // Return a random number between 1-6
 }
 
 /**********************************************************************
@@ -429,17 +340,6 @@ void getUserChoices(possibilities, choices, cur_count)
     } while(input != 0 && cur_count > 0); // Loop until user inputs 0 or there are no more dice left to choose
 }
 
-/*****************************************************************************
- * @brief Function rolls a single dice roll for a specified number of players
- * @param rolls -> The side rolled for each dice
- * @param num_players -> # of players in the game
-******************************************************************************/
-function rollAllPlayers(rolls, num_players)
-{
-    for(var i = 0; i < num_players; i++)
-        rolls[i] = determineRoll();
-}
-
 /***************************
  * @brief Swaps two players
  * @param p1 -> Player 1
@@ -499,75 +399,6 @@ void sortPlayers(players, start, end)
         sortPlayers(players, start, pivot - 1); // Run quicksort for left partition
 
         sortPlayers(players, pivot + 1, end); // Run quicksort for right partition
-    }
-}
-
-/*****************************************************
- * @brief Get the Player Turns object for each player
- * @param players -> See class def for Player
- * @param num_players -> # of players in the game
-*****************************************************/
-function getPlayerTurns(players, num_players)
-{
-    // Declare initial variables
-    var rolls; // array for each player's roll
-    var indices; // array for index of each player
-    var num_instances, turn = 0;    // # of duplicate rolls, turn order
-
-    rollAllPlayers(rolls, num_players); // Each player rolls once initially
-
-    // Starting with 6 -> 1 check for duplicate rolls
-    for(var i = 6; i > 0; i--)
-    {
-        num_instances = 0;
-
-        // Check all player rolls for duplicates
-        for(var j = 0; j < num_players; j++)
-        {
-            if(!players[j].getFlag() && rolls[j] == i) // Check if player has a turn order yet and the roll is duplicate
-               indices[num_instances++] = j;
-        }
-
-        getPlayerTurnsRecursive(players, indices, num_instances, turn); // For all duplicates within 6 -> 1 run a recursive loop
-    }
-}
-
-/*****************************************************
- * @brief Get the Player Turns object for each player
- * @param players -> See class def for Player
- * @param indices -> Index of each player in players
- * @param num_players -> # of players in the game
- * @param turn -> Current turn being processed
-*****************************************************/
-function getPlayerTurnsRecursive(players, indices, num_players, turn)
-{
-    if(num_players == 0) // Base Case: No duplicate rolls
-        return;
-    else if(num_players == 1) // Base Case: 1 duplicate roll, set turn order for that player
-        players[indices[0]].setTurn(turn++);
-    else // Case: Duplicate rolls, re-roll all players for that number
-    {
-        // Declare initial variables
-        var rolls;         // Array for each player's roll
-        var dupe_indices;  // Array for duplicate indices
-        var num_instances; // # of duplicate rolls
-
-        rollAllPlayers(rolls, num_players); // All players roll again
-
-        // Check for duplicates from 6 -> 1 again
-        for(var i = 6; i > 0; i--)
-        {
-            num_instances = 0;
-
-            // Checking only the previous duplicate players for more dupes
-            for(var j = 0; j < num_players; j++)
-            {
-                if(rolls[j] == i) // If it matches, store it
-                    dupe_indices[num_instances++] = indices[j];
-            }
-
-            getPlayerTurnsRecursive(players, dupe_indices, num_instances, turn); // Run recursive loop again for new dupes
-        }
     }
 }
 

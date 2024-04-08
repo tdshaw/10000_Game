@@ -1,0 +1,107 @@
+let player_names = JSON.parse(localStorage.getItem("player_names"));
+let num_players = Number(localStorage.getItem("num_players"));
+let players = []; // Array of Player objects
+
+localStorage.setItem("turn", 0); // Start turn order at 0
+
+// Add each player to the array
+for(i = 0; i < num_players; i++)
+{
+    players.push(new Player());
+
+    players[i].setName(player_names[i]);
+}
+
+getPlayerTurns(players, num_players); // Get turn order for each player
+
+/**************************************************************
+ * @brief Generates a random number between 1-6 for dice rolls
+**************************************************************/
+function determineRoll() {
+    return Math.floor(Math.random() * (6) + 1); // Return a random number between 1-6
+}
+
+/*****************************************************************************
+ * @brief Function rolls a single dice roll for a specified number of players
+ * @param rolls -> The side rolled for each dice
+ * @param num_players -> # of players in the game
+******************************************************************************/
+function rollAllPlayers(rolls, num_players)
+{
+    for(i = 0; i < num_players; i++)
+        rolls[i] = determineRoll();
+}
+
+/*****************************************************
+ * @brief Get the Player Turns object for each player
+ * @param players -> See class def for Player
+ * @param num_players -> # of players in the game
+*****************************************************/
+function getPlayerTurns(players, num_players)
+{
+    // Declare initial variables
+    var rolls = []; // array for each player's roll
+    var indices = []; // array for index of each player
+    var num_instances; // # of duplicate rolls 
+
+    rollAllPlayers(rolls, num_players); // Each player rolls once initially
+
+    // Starting with 6 -> 1 check for duplicate rolls
+    for(let i = 6; i > 0; i--)
+    {
+        num_instances = 0;
+        let turn = Number(localStorage.getItem("turn")); // Turn order
+
+        // Check all player rolls for duplicates
+        for(j = 0; j < num_players; j++)
+        {
+            if(!players[j].getFlag() && rolls[j] == i) // Check if player has a turn order yet and the roll is duplicate
+               indices[num_instances++] = j;
+        }
+
+        getPlayerTurnsRecursive(players, indices, num_instances, turn); // For all duplicates within 6 -> 1 run a recursive loop
+    }
+}
+
+/*****************************************************
+ * @brief Get the Player Turns object for each player
+ * @param players -> See class def for Player
+ * @param indices -> Index of each player in players
+ * @param num_players -> # of players in the game
+ * @param turn -> Current turn being processed
+*****************************************************/
+function getPlayerTurnsRecursive(players, indices, num_players, turn)
+{
+    if(num_players == 0) // Base Case: No duplicate rolls
+        return;
+    else if(num_players == 1) // Base Case: 1 duplicate roll, set turn order for that player
+    {
+        players[indices[0]].setTurn(turn++);
+        localStorage.setItem("turn", turn); // Store new turn order
+    }
+    else // Case: Duplicate rolls, re-roll all players for that number
+    {
+        // Declare initial variables
+        var rolls = [];         // Array for each player's roll
+        var dupe_indices = [];  // Array for duplicate indices
+        var num_instances; // # of duplicate rolls
+
+        rollAllPlayers(rolls, num_players); // All players roll again
+
+        // Check for duplicates from 6 -> 1 again
+        for(let i = 6; i > 0; i--)
+        {
+            num_instances = 0;
+            let turn = Number(localStorage.getItem("turn")); // Turn order
+
+            // Checking only the previous duplicate players for more dupes
+            for(j = 0; j < num_players; j++)
+            {
+                if(rolls[j] == i) // If it matches, store it
+                    dupe_indices[num_instances++] = indices[j];
+            }
+
+            getPlayerTurnsRecursive(players, dupe_indices, num_instances, turn); // Run recursive loop again for new dupes
+        }
+    }
+}

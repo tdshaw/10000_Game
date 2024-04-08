@@ -33,7 +33,7 @@ function getPlayerNames()
     localStorage.setItem("player_names", JSON.stringify(player_names));
 
     if(player_names.length == num_players)
-        location.href="";
+        location.href="roll_player_turns.html";
     else
         alert("Please enter a name for each player.");
 }

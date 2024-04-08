@@ -217,3 +217,27 @@ body.howtoplay {
             width: 30%;
             font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
         }
+
+.player_turns {
+    width: 40%;
+    margin-top: 10%;
+    margin-left: 30%;
+    border: thick solid #000000;
+}
+
+    .player_turns h1 {
+        text-align: center;
+        color: #FFFFFF;
+        font-size: 300%;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+        .player_turns h1 button {
+            color: #FFFFFF;
+            border-radius: 25%;
+            display: inline-block;
+            background-color: #1C352D;
+            font-size: larger;
+            width: 50%;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
