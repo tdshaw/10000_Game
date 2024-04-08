@@ -1,6 +1,63 @@
 let player_names = JSON.parse(localStorage.getItem("player_names"));
 let num_players = Number(localStorage.getItem("num_players"));
 let players = []; // Array of Player objects
+let clicked = false; // Flag for Roll button clicked or not
+
+const dice = document.querySelector('.dice');
+const rollBtn = document.querySelector('.roll');
+
+const randomDice = () => {
+
+    const random = Math.floor(Math.random() * 10);
+
+    if (random >= 1 && random <= 6) {
+        rollDice(random);
+    }
+    else {
+        randomDice();
+    }
+}
+
+const rollDice = random => {
+
+    dice.style.animation = 'rolling 4s';
+
+    setTimeout(() => {
+
+        switch (random) {
+            case 1:
+                dice.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                break;
+
+            case 6:
+                dice.style.transform = 'rotateX(180deg) rotateY(0deg)';
+                break;
+
+            case 2:
+                dice.style.transform = 'rotateX(-90deg) rotateY(0deg)';
+                break;
+
+            case 5:
+                dice.style.transform = 'rotateX(90deg) rotateY(0deg)';
+                break;
+
+            case 3:
+                dice.style.transform = 'rotateX(0deg) rotateY(90deg)';
+                break;
+
+            case 4:
+                dice.style.transform = 'rotateX(0deg) rotateY(-90deg)';
+                break;
+
+            default:
+                break;
+        }
+
+        dice.style.animation = 'none';
+
+    }, 4050);
+
+}
 
 localStorage.setItem("turn", 0); // Start turn order at 0
 
@@ -12,9 +69,13 @@ for(i = 0; i < num_players; i++)
     players[i].setName(player_names[i]);
 }
 
+rollBtn.addEventListener('click', randomDice);
+
 getPlayerTurns(players, num_players); // Get turn order for each player
 
 sortPlayers(players, 0, num_players - 1);
+
+console.log(players);
 
 localStorage.setItem("players", JSON.stringify(players));
 
@@ -32,8 +93,10 @@ function determineRoll() {
 ******************************************************************************/
 function rollAllPlayers(rolls, num_players)
 {
-    for(i = 0; i < num_players; i++)
+    for(let i = 0; i < num_players; i++)
+    {
         rolls[i] = determineRoll();
+    }
 }
 
 /*****************************************************
