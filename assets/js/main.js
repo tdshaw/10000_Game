@@ -1,3 +1,4 @@
-// let storageItems = ["num_players", "win_idx", "highest_pts", "players", "player_names"];
+let storageItems = ["num_players", "player_names"];
 
-localStorage.removeItem("num_players"); // Remove num_players from storage -> RESET game values
+for(i = 0; i < storageItems.length; i++)
+    localStorage.removeItem(storageItems[i]); // Reset any game values currently in storage

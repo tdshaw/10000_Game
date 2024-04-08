@@ -1,4 +1,5 @@
 let num_players = localStorage.getItem("num_players"); // Get num_players from storage
+let player_names = JSON.parse(localStorage.getItem("player_names"));
 
 // Set default
 if(num_players == null)
@@ -9,7 +10,10 @@ if(num_players == null)
 
 // Loop through num_players and add text boxes
 for(i = 0; i < num_players; i++){
-    document.getElementById("names").innerHTML += "<input id='' type='text'><br>";
+    if(player_names != null && player_names[i] != "" && player_names[i] != null)
+        document.getElementById("names").innerHTML += `<input type='text' value='${player_names[i]}'><br>`;
+    else
+        document.getElementById("names").innerHTML += "<input type='text'><br>";
 }
 
 /******************************************************
@@ -18,7 +22,7 @@ for(i = 0; i < num_players; i++){
 function getPlayerNames()
 {
     var input_boxes = document.getElementsByTagName("input");
-    var player_names = [];
+    player_names = [];
 
     for(i = 0; i < num_players; i++)
     {
