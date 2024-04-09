@@ -371,6 +371,9 @@ body.howtoplay {
             font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
         }
 
-    /* .player_turns .dice {
-        margin-left: 42%;
-    } */
+    .player_turns h2 {
+        text-align: center;
+        color: #FFFFFF;
+        font-size: 200%;
+        font-family: Arial, Helvetica, sans-serif;
+    }

@@ -1,14 +1,34 @@
 let player_names = JSON.parse(localStorage.getItem("player_names"));
 let num_players = Number(localStorage.getItem("num_players"));
+let clicked = localStorage.getItem("clicked"); // Flag for Roll button clicked or not
+let index = Number(localStorage.getItem("index")); // Index of player to be rolled next
+let rolls = JSON.parse(localStorage.getItem("rolls")); // Array of rolls for each player
 let players = []; // Array of Player objects
-let clicked = false; // Flag for Roll button clicked or not
 
 const dice = document.querySelector('.dice');
 const rollBtn = document.querySelector('.roll');
 
+// localStorage.removeItem("index");
+// localStorage.removeItem("rolls");
+
+// Set default values
+if(clicked == "null")
+    clicked = "false";
+if(index == "null")
+    index = 0;
+if(rolls == null)
+    rolls = [];
+
+console.log("Beginning", rolls, index, num_players);
+
 const randomDice = () => {
 
+    rollBtn.removeEventListener('click', randomDice);
+
     const random = Math.floor(Math.random() * 6 + 1);
+
+    rolls.push(random);
+    index++;
 
     rollDice(random);
 }
@@ -37,11 +57,11 @@ const rollDice = random => {
                 break;
 
             case 3:
-                dice.style.transform = 'rotateX(0deg) rotateY(90deg)';
+                dice.style.transform = 'rotateX(0deg) rotateY(-90deg)';
                 break;
 
             case 4:
-                dice.style.transform = 'rotateX(0deg) rotateY(-90deg)';
+                dice.style.transform = 'rotateX(180deg) rotateY(-90deg)';
                 break;
 
             default:
@@ -50,8 +70,23 @@ const rollDice = random => {
 
         dice.style.animation = 'none';
 
+        let rolled = document.getElementById("rolled");
+        rolled.innerHTML += `<h2 id="${player_names[index - 1]}">${player_names[index - 1]} rolled: ${random}</h2>`;
+
     }, 3050);
 
+    setTimeout(() => {
+
+        localStorage.setItem("clicked", true);
+
+        localStorage.setItem("index", index);
+
+        localStorage.setItem("rolls", JSON.stringify(rolls));
+
+        removePlayerRoll();
+
+        location.reload();
+    }, 7050);
 }
 
 localStorage.setItem("turn", 0); // Start turn order at 0
@@ -64,15 +99,49 @@ for(i = 0; i < num_players; i++)
     players[i].setName(player_names[i]);
 }
 
-rollBtn.addEventListener('click', randomDice);
+if(index < num_players)
+    outputPlayerRoll(players[index].name);
 
-getPlayerTurns(players, num_players); // Get turn order for each player
+// getPlayerTurns(players, num_players); // Get turn order for each player
 
-sortPlayers(players, 0, num_players - 1);
+// sortPlayers(players, 0, num_players - 1);
 
-console.log(players);
+// localStorage.setItem("players", JSON.stringify(players));
 
-localStorage.setItem("players", JSON.stringify(players));
+/*************************************************************************
+ * @brief Outputs an h2 to div w/ id="player_roll" for each player's roll
+ * @param player_name -> The name of the player currently rolling
+*************************************************************************/
+function outputPlayerRoll(player_name) 
+{
+    let clicked = localStorage.getItem("clicked"); // Flag for Roll button clicked or not
+   
+    if(clicked == "false")
+    {
+        let rolling = document.getElementById("rolling");
+        rolling.innerHTML += `<h2 id="player_roll">${player_name} is rolling:</h2>`;
+
+        rollBtn.addEventListener('click', randomDice);
+    }
+}
+
+/***************************************************************************
+ * @brief Removes an h2 from div w/ id="player_roll" for each player's roll
+***************************************************************************/
+function removePlayerRoll() 
+{
+    let clicked = localStorage.getItem("clicked"); // Flag for Roll button clicked or not
+   
+    if(clicked == "true")
+    {
+        let player_roll = document.getElementById("player_roll");
+        player_roll.remove();
+
+        localStorage.setItem("clicked", false);
+    }
+}
+
+/************************************************************************************************************************/
 
 /**************************************************************
  * @brief Generates a random number between 1-6 for dice rolls
@@ -167,6 +236,8 @@ function getPlayerTurnsRecursive(players, indices, num_players, turn)
         }
     }
 }
+
+/************************************************************************************************************************/
 
 /**********************************************
  * @brief Swaps two players
