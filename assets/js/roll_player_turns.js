@@ -8,19 +8,14 @@ const rollBtn = document.querySelector('.roll');
 
 const randomDice = () => {
 
-    const random = Math.floor(Math.random() * 10);
+    const random = Math.floor(Math.random() * 6 + 1);
 
-    if (random >= 1 && random <= 6) {
-        rollDice(random);
-    }
-    else {
-        randomDice();
-    }
+    rollDice(random);
 }
 
 const rollDice = random => {
 
-    dice.style.animation = 'rolling 4s';
+    dice.style.animation = 'rolling 3s';
 
     setTimeout(() => {
 
@@ -55,7 +50,7 @@ const rollDice = random => {
 
         dice.style.animation = 'none';
 
-    }, 4050);
+    }, 3050);
 
 }
 
