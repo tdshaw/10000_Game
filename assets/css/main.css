@@ -150,6 +150,7 @@ body.howtoplay {
     margin-top: 10%;
     margin-left: 30%;
     border: thick solid #000000;
+    border-radius: 30%;
 }
 
     .menu .title h1{
@@ -179,6 +180,7 @@ body.howtoplay {
     margin-top: 10%;
     margin-left: 30%;
     border: thick solid #000000; 
+    border-radius: 15%;
 }
     .choose_players h1 {
         text-align: center;
@@ -218,6 +220,7 @@ body.howtoplay {
     margin-top: 5%;
     margin-left: 30%;
     border: thick solid #000000;
+    border-radius: 30%;
 }
     .options h1 {
         text-align: center;
@@ -257,6 +260,7 @@ body.howtoplay {
     margin-top: 0;
     margin-left: 30%;
     border: thick solid #000000;
+    border-radius: 30%;
 }
     .choose_names h1 {
         text-align: center;
@@ -288,6 +292,7 @@ body.howtoplay {
     margin-top: 0;
     margin-left: 30%;
     border: thick solid #000000;
+    border-radius: 10%;
 }
 
     .instructions h1 {
@@ -352,6 +357,7 @@ body.howtoplay {
     margin-top: 10%;
     margin-left: 30%;
     border: thick solid #000000;
+    border-radius: 15%;
 }
 
     .player_turns h1 {
