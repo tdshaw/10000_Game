@@ -1,8 +1,14 @@
 let player_names = JSON.parse(localStorage.getItem("player_names"));
 let num_players = Number(localStorage.getItem("num_players"));
-let clicked = localStorage.getItem("clicked"); // Flag for Roll button clicked or not
+let clicked = Boolean(localStorage.getItem("clicked")); // Flag for Roll button clicked or not
 let index = Number(localStorage.getItem("index")); // Index of player to be rolled next
 let rolls = JSON.parse(localStorage.getItem("rolls")); // Array of rolls for each player
+let roll_num = Number(localStorage.getItem("roll_num"));
+let roll_check = Boolean(localStorage.getItem("roll_check")); // Flag for checking if players have all rolled initially
+let dupe_check = Boolean(localStorage.getItem("dupe_check")); // Flag for checking duplicates
+let reroll_check = Boolean(localStorage.getItem("reroll_check")); // Flag for checking if players have rerolled
+let indices = JSON.parse(localStorage.getItem("indices")); // 2D array for player indices depending on roll #
+
 let players = []; // Array of Player objects
 
 const dice = document.querySelector('.dice');
@@ -10,16 +16,30 @@ const rollBtn = document.querySelector('.roll');
 
 // localStorage.removeItem("index");
 // localStorage.removeItem("rolls");
+// localStorage.removeItem("indices");
+// localStorage.removeItem("roll_num");
+// localStorage.removeItem("clicked");
+// localStorage.removeItem("roll_check");
+// localStorage.removeItem("dupe_check");
+// localStorage.removeItem("reroll_check");
 
 // Set default values
-if(clicked == "null")
-    clicked = "false";
-if(index == "null")
-    index = 0;
+if(clicked == null)
+    clicked = false;
 if(rolls == null)
     rolls = [];
+if(indices == null)
+    indices = [[], [], [], [], [], []];
+if(roll_num == 0)
+    roll_num = 6;
+if(roll_check == null)
+    roll_check = false;
+if(dupe_check == null)
+    dupe_check = false;
+if(reroll_check == null)
+    reroll_check = false;
 
-console.log("Beginning", rolls, index, num_players);
+console.log("Beginning", players, rolls, index, num_players, roll_num, clicked, roll_check, dupe_check, reroll_check);
 
 const randomDice = () => {
 
@@ -77,8 +97,6 @@ const rollDice = random => {
 
     setTimeout(() => {
 
-        localStorage.setItem("clicked", true);
-
         localStorage.setItem("index", index);
 
         localStorage.setItem("rolls", JSON.stringify(rolls));
@@ -99,7 +117,47 @@ for(i = 0; i < num_players; i++)
     players[i].setName(player_names[i]);
 }
 
-if(index < num_players)
+if(!roll_check && index < num_players)
+    outputPlayerRoll(players[index].name);
+
+if(!dupe_check && index >= num_players)
+{
+    localStorage.setItem("roll_check", true);
+    getDuplicates();
+    localStorage.setItem("dupe_check", true);
+    localStorage.setItem("indices", JSON.stringify(indices));
+    location.reload();
+}
+
+console.log(indices);
+
+if(roll_check && dupe_check && !reroll_check && roll_num >= 1 && indices[roll_num - 1].length > 1)
+{
+    let rolling = document.getElementById("rolling");
+    rolling.innerHTML += 
+    `<h2 id="player_roll">
+    ${indices[roll_num - 1].length} players rolled a ${roll_num - 1}.
+        <br>Each player must roll again.
+    </h2>`;
+    
+    setTimeout(() => {
+        let player_roll = document.getElementById("player_roll");
+        player_roll.remove();
+        localStorage.setItem("index", 0);
+        localStorage.setItem("reroll_check", true);
+        location.reload();
+    }, 6050);
+}
+else if(roll_num >= 1 && roll_check && dupe_check && !reroll_check && indices[roll_num - 1].length <= 1)
+{
+    roll_num -= 1;
+    if(roll_num == 0)
+        roll_num = -1;
+    localStorage.setItem("roll_num", roll_num);
+    location.reload();
+}
+
+if(reroll_check && roll_num >= 1 && index < indices[roll_num - 1].length)
     outputPlayerRoll(players[index].name);
 
 // getPlayerTurns(players, num_players); // Get turn order for each player
@@ -114,15 +172,10 @@ if(index < num_players)
 *************************************************************************/
 function outputPlayerRoll(player_name) 
 {
-    let clicked = localStorage.getItem("clicked"); // Flag for Roll button clicked or not
-   
-    if(clicked == "false")
-    {
-        let rolling = document.getElementById("rolling");
-        rolling.innerHTML += `<h2 id="player_roll">${player_name} is rolling:</h2>`;
+    let rolling = document.getElementById("rolling");
+    rolling.innerHTML += `<h2 id="player_roll">${player_name} is rolling:</h2>`;
 
-        rollBtn.addEventListener('click', randomDice);
-    }
+    rollBtn.addEventListener('click', randomDice);
 }
 
 /***************************************************************************
@@ -130,39 +183,32 @@ function outputPlayerRoll(player_name)
 ***************************************************************************/
 function removePlayerRoll() 
 {
-    let clicked = localStorage.getItem("clicked"); // Flag for Roll button clicked or not
-   
-    if(clicked == "true")
-    {
-        let player_roll = document.getElementById("player_roll");
-        player_roll.remove();
+    let player_roll = document.getElementById("player_roll");
+    player_roll.remove();
+}
 
-        localStorage.setItem("clicked", false);
+/****************************************************************************************
+ * @brief Gets a 2d-array of indices for each player's roll (checking for duplicates)
+****************************************************************************************/
+function getDuplicates()
+{
+    var num_instances; // # of duplicate rolls 
+
+    // Starting with 6 -> 1 check for duplicate rolls
+    for(let i = 6; i > 0; i--)
+    {
+        num_instances = 0;
+
+        // Check all player rolls for duplicates
+        for(j = 0; j < num_players; j++)
+        {
+            if(!players[j].getFlag() && rolls[j] == i) // Check if player has a turn order yet and the roll is duplicate
+               indices[i - 1][num_instances++] = j;
+        }
     }
 }
 
 /************************************************************************************************************************/
-
-/**************************************************************
- * @brief Generates a random number between 1-6 for dice rolls
-**************************************************************/
-function determineRoll() {
-    return Math.floor(Math.random() * (6) + 1); // Return a random number between 1-6
-}
-
-/*****************************************************************************
- * @brief Function rolls a single dice roll for a specified number of players
- * @param rolls -> The side rolled for each dice
- * @param num_players -> # of players in the game
-******************************************************************************/
-function rollAllPlayers(rolls, num_players)
-{
-    for(let i = 0; i < num_players; i++)
-    {
-        rolls[i] = determineRoll();
-    }
-}
-
 /*****************************************************
  * @brief Get the Player Turns object for each player
  * @param players -> See class def for Player
